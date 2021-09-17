@@ -1,9 +1,23 @@
 import Sequelize from 'sequelize'
 
-// TODO :  COLOCAR COMO UMA VARIAVEL DO CONTAINER A CONEXAO DO BANCO
-const sequelize = new Sequelize('transfeera', 'postgres', '123456', {
-    host: 'localhost',
-    dialect: 'postgres'
-  });
+import Constantes from '../utils/const.js';
 
-  export default sequelize;
+const sequelize = {
+  con : new Sequelize(Constantes.Db.DbName, Constantes.Db.DbUSer, Constantes.Db.DbPwd, {
+    host: Constantes.Db.ServerName,
+    dialect: Constantes.Sequelize.Dialect
+  }),
+  iniciaDb : async function() {
+    try {
+    
+      // Sincroniza a criação tabelas
+      const resultado = await this.con.sync();
+      
+      console.log(resultado);
+    } catch (error) {
+        console.log(error);
+    }
+  }
+};
+
+export default sequelize;

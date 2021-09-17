@@ -4,7 +4,7 @@ import db from '../../db/db.js'
 
 import FavorecidoBanco from './favorecido-banco.model.js';
 
-const Banco = db.con.define('Bancos', {
+const Favorecido = db.con.define('Favorecidos', {
   // Chave Primária
   id: {
     primaryKey: true,
@@ -12,21 +12,26 @@ const Banco = db.con.define('Bancos', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  // Código do Banco
-  codigo: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  // Nome do Banco
+  // Nome do Favorecido
   nome: {
     type: DataTypes.STRING,
     allowNull: false
-  }
-}, {  
+  },
+  // Cpf e Cnpj
+  cpfcnpj: {
+    type: DataTypes.STRING(14),
+    allowNull: false
+  },
+  // Email
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false
+  }  
+}, {
     freezeTableName: true,
-    timestamps: false
+    timestamps: false  
 });
 
-FavorecidoBanco.belongsTo(Banco, {  foreignKey: 'idBanco'});
+FavorecidoBanco.belongsTo(Favorecido, { foreignKey: 'idFavorecido'});
 
-export default Banco;
+export default Favorecido;

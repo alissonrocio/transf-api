@@ -14,7 +14,7 @@ router.get('/:id', controllerBanco.getById);
 router.post('/', controllerBanco.create);
 
 //Put
-router.put('/:id', controllerBanco.edit);
+router.patch('/:id', controllerBanco.edit);
 
 //Remove
 router.delete('/:id', controllerBanco.remove);
