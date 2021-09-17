@@ -12,7 +12,8 @@ const Constantes = {
         Dialect: 'postgres'
     },
     Api : {
-        Paginacao: 10
+        Paginate: 10,
+        PaginateMax: 100
     }
 }
 

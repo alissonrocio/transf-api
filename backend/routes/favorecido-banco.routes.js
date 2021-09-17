@@ -2,24 +2,26 @@ import express from 'express'
 
 import controllerFavorecidoBanco from '../controllers/favorecido-banco.controller.js'
 
+import validation from '../validation/favorecido-banco.validation.js';
+
 const router = express.Router()
 
 // Get All 
-router.get('/', controllerFavorecidoBanco.getAll);
+router.get('/', validation.getAll , controllerFavorecidoBanco.getAll);
 
 //Get By Id
-router.get('/:id', controllerFavorecidoBanco.getById);
+router.get('/:id', validation.getById , controllerFavorecidoBanco.getById);
 
 //Post
-router.post('/', controllerFavorecidoBanco.create);
+router.post('/', validation.create ,controllerFavorecidoBanco.create);
 
 //Patch
-router.patch('/:id', controllerFavorecidoBanco.edit);
+router.patch('/:id', validation.edit , controllerFavorecidoBanco.edit);
 
 //Remove 
-router.delete('/:id', controllerFavorecidoBanco.remove);
+router.delete('/:id', validation.remove ,controllerFavorecidoBanco.remove);
 
 //Remove
-router.delete('/', controllerFavorecidoBanco.removeMany);
+router.delete('/', validation.removeMany , controllerFavorecidoBanco.removeMany);
 
 export default router;

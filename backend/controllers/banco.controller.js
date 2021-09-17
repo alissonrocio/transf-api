@@ -6,13 +6,15 @@ const getAll =  async function(req, res) {
     try
     {
         // Página desejada
-        const page = req.query.page ? parseInt(req.query.page) ? parseInt(req.query.page) : 1 : 1;        
+        const page = req.query.page ? parseInt(req.query.page) : 1;     
+        // Quantidade de registros
+        const length = req.query.length ? parseInt(req.query.length) : Constantes.Api.Paginate;     
         
         // Default da paginação
         let params = {
             order: ['id'],
-            limit: Constantes.Api.Paginacao,
-            offset: (page - 1) * Constantes.Api.Paginacao
+            limit: length,
+            offset: (page - 1) * length
         };
        
         if (req.query.search)
@@ -29,7 +31,7 @@ const getAll =  async function(req, res) {
 
         const retorno = {
             page : page,
-            pageSize : Constantes.Api.Paginacao,
+            pageSize : length,
             length : bancos.count,
             data : bancos.rows
         }
@@ -49,14 +51,6 @@ const getAll =  async function(req, res) {
 const getById = async function(req, res) {
     try
     {   
-        // Se o parâmetro não é um inteiro retorna erro.
-        if (!parseInt(req.params.id))
-        {
-            res.statusCode = 400;
-            res.send({tipo: Enumerados.TipoMsgEnum.Erro , data: null , mensagem: "Url inválida!!!"});
-            return;
-        }
-        
         // Busca o registro
         const banco = await Banco.findByPk(parseInt(req.params.id));
        
@@ -93,14 +87,6 @@ const create = async function(req, res) {
 const edit = async function(req, res) {
     try
     {
-        // Se o parâmetro não é um inteiro retorna erro.
-        if (!parseInt(req.params.id))
-        {
-            res.statusCode = 400;
-            res.send({tipo: Enumerados.TipoMsgEnum.Erro , data: null , mensagem: "Url inválida!!!"});
-            return;
-        }
-        
          // Atualizando o registro no banco
          const qtde = await Banco.update(
             req.body,
@@ -121,14 +107,6 @@ const edit = async function(req, res) {
 
 const remove = async function(req, res) {
     try {
-
-        // Se o parâmetro não é uma inteiro retorna erro.
-        if (!parseInt(req.params.id))
-        {
-            res.statusCode = 400;
-            res.send({tipo: Enumerados.TipoMsgEnum.Erro , data: null , mensagem: "Url inválida!!!"});
-            return;
-        }
 
         // Apaga o registro do banco
         const qtde = await Banco.destroy({

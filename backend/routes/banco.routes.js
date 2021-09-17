@@ -2,21 +2,23 @@ import express from 'express'
 
 import controllerBanco from '../controllers/banco.controller.js'
 
+import validation from '../validation/banco.validation.js';
+
 const router = express.Router()
 
 // Get All 
-router.get('/', controllerBanco.getAll);
+router.get('/', validation.getAll , controllerBanco.getAll);
 
 //Get By Id
-router.get('/:id', controllerBanco.getById);
+router.get('/:id', validation.getById , controllerBanco.getById);
 
 //Post
-router.post('/', controllerBanco.create);
+router.post('/', validation.create , controllerBanco.create);
 
 //Put
-router.patch('/:id', controllerBanco.edit);
+router.patch('/:id', validation.edit , controllerBanco.edit);
 
 //Remove
-router.delete('/:id', controllerBanco.remove);
+router.delete('/:id',  validation.remove , controllerBanco.remove);
 
 export default router;

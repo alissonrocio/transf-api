@@ -14,12 +14,12 @@ const Banco = db.con.define('Bancos', {
   },
   // Código do Banco
   codigo: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(10),
     allowNull: false
   },
   // Nome do Banco
   nome: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(255),
     allowNull: false
   }
 }, {  
@@ -27,6 +27,6 @@ const Banco = db.con.define('Bancos', {
     timestamps: false
 });
 
-FavorecidoBanco.belongsTo(Banco, {  foreignKey: 'idBanco'});
+FavorecidoBanco.belongsTo(Banco, { foreignKey: {name: 'idBanco' , allowNull: false} });
 
 export default Banco;

@@ -17,10 +17,10 @@ const FavorecidoBanco = db.con.define('Favorecidos_Bancos', {
     },
     // Dígito da agência
     agenciaDigito: {
-        type: DataTypes.STRING(5),
+        type: DataTypes.STRING(1),
         allowNull: true
     },
-    // Tipo da Conta [Conta Corrente , Conta Poupança, Conta Facil]
+    // Tipo da Conta [(1) Conta Corrente , (2) Conta Poupança, (3) Conta Fácil]
     contaTipo: {
         type: DataTypes.INTEGER,
         allowNull: false
@@ -32,7 +32,7 @@ const FavorecidoBanco = db.con.define('Favorecidos_Bancos', {
     },
     // Dígito da conta
     contaDigito: {
-        type: DataTypes.STRING(5),
+        type: DataTypes.STRING(1),
         allowNull: false
     },
     // Status [Validado , Rascunho]

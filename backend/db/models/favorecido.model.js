@@ -14,7 +14,7 @@ const Favorecido = db.con.define('Favorecidos', {
   },
   // Nome do Favorecido
   nome: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(255),
     allowNull: false
   },
   // Cpf e Cnpj
@@ -24,7 +24,7 @@ const Favorecido = db.con.define('Favorecidos', {
   },
   // Email
   email: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(255),
     allowNull: false
   }  
 }, {
@@ -32,6 +32,6 @@ const Favorecido = db.con.define('Favorecidos', {
     timestamps: false  
 });
 
-FavorecidoBanco.belongsTo(Favorecido, { foreignKey: 'idFavorecido'});
+FavorecidoBanco.belongsTo(Favorecido, { foreignKey: {name: 'idBanco' , allowNull: false} });
 
 export default Favorecido;

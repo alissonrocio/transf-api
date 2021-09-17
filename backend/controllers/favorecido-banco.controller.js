@@ -10,13 +10,15 @@ const getAll =  async function(req, res) {
     try
     {
         // Página desejada
-        const page = req.query.page ? parseInt(req.query.page) ? parseInt(req.query.page) : 1 : 1;        
+        const page = req.query.page ? parseInt(req.query.page) : 1;     
+        // Quantidade de registros
+        const length = req.query.length ? parseInt(req.query.length) : Constantes.Api.Paginate;     
         
         // Default da paginação
         let params = {
             order: ['id'],
-            limit: Constantes.Api.Paginacao,
-            offset: (page - 1) * Constantes.Api.Paginacao
+            limit: length,
+            offset: (page - 1) * length
         };
 
         params.include = [{ model: Banco } , { model: Favorecido }]
@@ -39,7 +41,7 @@ const getAll =  async function(req, res) {
 
         const retorno = {
             page : page,
-            pageSize : Constantes.Api.Paginacao,
+            pageSize : length,
             length : favorecidosBancos.count,
             data : favorecidosBancos.rows
         }
@@ -56,14 +58,36 @@ const getAll =  async function(req, res) {
     }
 }
 
+const getById = async function(req, res) {
+    try
+    {   
+        // Busca o registro
+        const favorecidoBanco = await FavorecidoBanco.findByPk(parseInt(req.params.id), {include:[{model:Banco},{model:Favorecido}]} );
+       
+        // Response
+        res.statusCode = 200;
+        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: favorecidoBanco , mensagem: !favorecidoBanco ? "Registro não encontrado!!!" : null});
+    }
+    catch (error)
+    {
+        console.error("getById - Deu ruim :(",error);
+        res.statusCode = 400;
+        res.send({tipo: Enumerados.TipoMsgEnum.Erro , data: null , mensagem: error});
+    }
+}
+
 const create = async function(req, res) {
     try
     {      
         // Se o favorecido já existe , através da chamada ao seu cpj/cnpj ou email , retorna seu id.
-        if (req.body.favorecidoBanco.idFavorecido)
+        if (req.body.favorecido.id)
         {
+            let newFavorecidoBanco = req.body.info;
+            newFavorecidoBanco.idFavorecido = req.body.favorecido.id;
+            newFavorecidoBanco.idBanco = req.body.banco.id;            
+
             // Cria o Favorecido
-            await FavorecidoBanco.create(req.body.favorecidoBanco);              
+            await FavorecidoBanco.create(newFavorecidoBanco);              
         }
         else {
             const t = await db.con.transaction();
@@ -71,17 +95,16 @@ const create = async function(req, res) {
                 
                 // Cria um novo favorecido.
                 const result = await Favorecido.create(req.body.favorecido , { transaction: t });  
-
-                // Pega o favorecido banco e adiciona o idFavorecido criado.
-                let favorecidoBanco = req.body.favorecidoBanco;
-                favorecidoBanco.idFavorecido = result.id;
+                             
+                let newFavorecidoBanco = req.body.info;                             
+                newFavorecidoBanco.idFavorecido = result.id;
+                newFavorecidoBanco.idBanco = req.body.banco.id;                
 
                 // Cria o Favorecido Banco
-                await FavorecidoBanco.create(favorecidoBanco,{ transaction: t });  
+                await FavorecidoBanco.create(newFavorecidoBanco,{ transaction: t });  
 
                 //Comita
                 await t.commit();
-
             }
             catch (error) {
                 await t.rollback();
@@ -100,101 +123,89 @@ const create = async function(req, res) {
     }
 }
 
-const getById = async function(req, res) {
-    try
-    {   
-        // Se o parâmetro não é um inteiro retorna erro.
-        if (!parseInt(req.params.id))
-        {
-            res.statusCode = 400;
-            res.send({tipo: Enumerados.TipoMsgEnum.Erro , data: null , mensagem: "Url inválida!!!"});
-            return;
-        }
-        
-        // Busca o registro
-        const favorecidoBanco = await FavorecidoBanco.findByPk(parseInt(req.params.id), {include:[{model:Banco},{model:Favorecido}]} );
-       
-        // Response
-        res.statusCode = 200;
-        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: favorecidoBanco , mensagem: !favorecidoBanco ? "Registro não encontrado!!!" : null});
-    }
-    catch (error)
-    {
-        console.error("getById - Deu ruim :(",error);
-        res.statusCode = 400;
-        res.send({tipo: Enumerados.TipoMsgEnum.Erro , data: null , mensagem: error});
-    }
-}
-
 const edit = async function(req, res) {
     try
     {
-        // Se o parâmetro não é um inteiro retorna erro.
-        if (!parseInt(req.params.id))
-        {
-            res.statusCode = 400;
-            res.send({tipo: Enumerados.TipoMsgEnum.Erro , data: null , mensagem: "Url inválida!!!"});
-            return;
-        }
-
-        const t = await db.con.transaction();
         let qtde = 0;
-        try {
-            // Se o favorecido já existe , através da chamada ao seu cpj/cnpj ou email , retorna seu id.
-            if (req.body.favorecidoBanco.idFavorecido)
-            { 
-                // Atualiza o Favorecido Banco
-                qtde = await FavorecidoBanco.update(
-                    req.body.favorecidoBanco, 
-                    {
-                        where: {id:req.params.id} , 
-                        transaction: t
-                    }
-                );
-    
-                // Atualiza o favorecido.
-                await Favorecido.update(
-                    req.body.favorecido, 
-                    {
-                        where: {id:req.body.favorecidoBanco.idFavorecido},
-                        transaction: t
-                    });
-    
-                //Comita
-                await t.commit();
-    
-                // Response
-                res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: req.body , mensagem: `${qtde} registro atualizado!!!`});  
-            } 
-            else {
+        if (req.body.favorecido)
+        {
+            const t = await db.con.transaction();           
+            try {
 
-                // Cria um novo favorecido.
-                const result = await Favorecido.create(req.body.favorecido , { transaction: t });  
+                // Se o favorecido já existe , através da chamada ao seu cpj/cnpj ou email , retorna seu id.
+                if (req.body.favorecido.id)
+                { 
+                    // Pega o favorecido banco e adiciona o idFavorecido criado.
+                    let newFavorecidoBanco = req.body.info;
+                    newFavorecidoBanco.idFavorecido = req.body.favorecido.id;
+                    if (req.body.banco){
+                        newFavorecidoBanco.idBanco = req.body.banco.id;     
+                    }                   
 
-                // Pega o favorecido banco e adiciona o idFavorecido criado.
-                let favorecidoBanco = req.body.favorecidoBanco;
-                favorecidoBanco.idFavorecido = result.id;
+                    // Atualiza o Favorecido Banco
+                    qtde = await FavorecidoBanco.update(
+                        newFavorecidoBanco, 
+                        {
+                            where: {id:req.params.id}, 
+                            transaction: t
+                        }
+                    );
 
-                // Cria o Favorecido Banco
-                qtde = await FavorecidoBanco.update(
-                    favorecidoBanco,
-                    {
-                        where: {id:parseInt(req.params.id)},
-                        transaction: t
-                    });  
+                    // Atualiza o favorecido.
+                    await Favorecido.update(
+                        req.body.favorecido, 
+                        {
+                            where: {id:req.body.favorecido.id},
+                            transaction: t
+                        });
 
-                //Comita
-                await t.commit();                
+                    //Comita
+                    await t.commit();
+                } 
+                else {
+
+                    // Cria um novo favorecido.
+                    const result = await Favorecido.create(req.body.favorecido , { transaction: t });  
+
+                    // Pega o favorecido banco e adiciona o idFavorecido criado.
+                    let newFavorecidoBanco = req.body.info;
+                    newFavorecidoBanco.idFavorecido = result.id;
+                    newFavorecidoBanco.idBanco = req.body.banco.id;      
+
+                    // Cria o Favorecido Banco
+                    qtde = await FavorecidoBanco.update(
+                        newFavorecidoBanco,
+                        {
+                            where: {id:parseInt(req.params.id)},
+                            transaction: t
+                        });  
+
+                    //Comita
+                    await t.commit();                
+                }
             }
+            catch (error) {
+                await t.rollback();
+                throw error
+            }
+        } else {
 
-            // Response
-            res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: req.body , mensagem: `${qtde} registro atualizado!!!`});  
+            // Pega o favorecido banco e adiciona o idFavorecido criado.
+            let newFavorecidoBanco = req.body.info;                
+            if (req.body.banco){
+                newFavorecidoBanco.idBanco = req.body.banco.id;     
+            }     
 
+            // Atualiza o Favorecido Banco
+            qtde = await FavorecidoBanco.update(
+            newFavorecidoBanco, 
+            {
+                where: {id:req.params.id}                
+            });
         }
-        catch (error) {
-            await t.rollback();
-            throw error
-        }
+
+        // Response
+        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: req.body , mensagem: `${qtde} registro atualizado!!!`}); 
     }
     catch (error)
     {
@@ -207,14 +218,6 @@ const edit = async function(req, res) {
 const remove = async function(req, res) {
     try {
 
-        // Se o parâmetro não é uma inteiro retorna erro.
-        if (!parseInt(req.params.id))
-        {
-            res.statusCode = 400;
-            res.send({tipo: Enumerados.TipoMsgEnum.Erro , data: null , mensagem: "Url inválida!!!"});
-            return;
-        }
-      
         const qtde = await FavorecidoBanco.destroy({
             where : {
                id : req.params.id
@@ -235,13 +238,6 @@ const remove = async function(req, res) {
 
 const removeMany =  async function(req, res) {
     try {
-        
-        if (!req.body)
-        {
-            res.statusCode = 404;
-            res.send({tipo: Enumerados.TipoMsgEnum.Erro , data: null , mensagem: `Registro(s) não encontrado!!!`});
-            return;
-        }
         
         let lista = JSON.parse(JSON.stringify(req.body));
 
