@@ -32,6 +32,6 @@ const Favorecido = db.con.define('Favorecidos', {
     timestamps: false  
 });
 
-FavorecidoBanco.belongsTo(Favorecido, { foreignKey: {name: 'idBanco' , allowNull: false} });
+FavorecidoBanco.belongsTo(Favorecido, { foreignKey: {name: 'idFavorecido' , allowNull: false} });
 
 export default Favorecido;
