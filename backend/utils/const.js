@@ -1,11 +1,15 @@
 import Sequelize from 'sequelize'
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 const Constantes = {
     Db : {
-        ServerName : "localhost",
-        DbName: "transfeera",
-        DbUSer: "postgres",
-        DbPwd: "123456",
+        DbServer : process.env.DBSERVER,
+        DbPort: process.env.DBPORT,
+        DbName: process.env.DBNAME,
+        DbUSer: process.env.DBUSER,
+        DbPwd: process.env.DBPWD,
     },
     Sequelize : {
         OperadoresSequelize : Sequelize.Op,

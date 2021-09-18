@@ -1,0 +1,28 @@
+version: "3.9" 
+services:
+  backend:
+    # build: .
+    depends_on: 
+      - database
+    image: alissonrocio/transfeera-app
+    environment: 
+      DBSERVER: "database"
+      DBPORT: 5432
+      DBNAME: "transfeera"
+      DBUSER: "postgres"
+      DBPWD: "123456"
+    networks:
+      - net-transfeera
+    ports:
+      - "8087:8087"
+  database:
+    # build: .
+    image: alissonrocio/transfeera-db  
+    networks:
+      - net-transfeera
+    ports:
+      - "8086:5432"
+
+networks:
+  net-transfeera:
+      driver: bridge
