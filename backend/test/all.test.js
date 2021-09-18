@@ -14,7 +14,9 @@ describe('build-teste', function() {
                 where : {
                 [Constantes.Sequelize.OperadoresSequelize.or]: [
                     {agenciaNumero: '9999'},
-                    {contaNumero: '99999999999'}]
+                    {contaNumero: '99999999999'},
+                    {contaNumero: '99999999'}
+                    ]
                 }
             });
             await Banco.destroy({

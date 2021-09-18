@@ -102,7 +102,10 @@ const getById = validate(paramValidation, {}, {});
 
 const create =  validate(bodyPostValidation, {}, {});
 
-const edit =  validate(bodyPatchValidation, {}, {});
+const edit =  validate({
+  body: bodyPatchValidation.body,
+  params: paramValidation.params
+  }, {}, {});
 
 const remove = validate(paramValidation, {}, {});
 

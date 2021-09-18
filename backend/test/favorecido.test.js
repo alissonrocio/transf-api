@@ -46,11 +46,7 @@ describe('ENDPOINT - FAVORECIDO', function() {
     it('url inválida', async function() {
       const response = await supertest(app)
                              .post('/api/v1/favorecido/1')
-                             .send({
-                                "nome":"Sou um favorecido de teste",
-                                "cpfcnpj":"00000000000",
-                                "email":"a@a.com" 
-                              });
+                             .send({});
       assert.equal(response.statusCode,404);
     });  
   });
@@ -167,21 +163,13 @@ describe('ENDPOINT - FAVORECIDO', function() {
     it('url nome errado', async function() {
       const response = await supertest(app)
                              .patch(`/api/v1/favorecidos/9999999`)
-                             .send({
-                                    "nome":"Sou um favorecido de teste",
-                                    "cpfcnpj":"00000000000",
-                                    "email":"a@a.com" 
-                                   });
+                             .send({});
       assert.equal(response.statusCode,404);
     });   
     it('url inválida', async function() {
       const response = await supertest(app)
                               .patch(`/api/v1/favorecido/x`)
-                              .send({
-                                    "nome":"Sou um favorecido de teste",
-                                    "cpfcnpj":"00000000000",
-                                    "email":"a@a.com" 
-                                    });
+                              .send({});
       assert.equal(response.statusCode,400);
     });  
   });

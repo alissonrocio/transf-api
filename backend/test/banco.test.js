@@ -34,19 +34,13 @@ describe('ENDPOINT - BANCO', function() {
     it('url nome errado', async function() {
       const response = await supertest(app)
                              .post('/api/v1/bancos/')
-                             .send({
-                                  "codigo":"999",
-                                  "nome":"Sou um banco de teste"    
-                              });
+                             .send({});
       assert.equal(response.statusCode,404);
     });   
     it('url inválida', async function() {
       const response = await supertest(app)
                              .post('/api/v1/banco/1')
-                             .send({
-                                  "codigo":"999",
-                                  "nome":"Sou um banco de teste"    
-                              });
+                             .send({});
       assert.equal(response.statusCode,404);
     });  
   });
@@ -158,19 +152,13 @@ describe('ENDPOINT - BANCO', function() {
     it('url nome errado', async function() {
       const response = await supertest(app)
                              .patch(`/api/v1/bancos/9999999`)
-                             .send({
-                                    "codigo":"999",
-                                    "nome":"Sou um banco de teste atualizado"    
-                                   });
+                             .send({});
       assert.equal(response.statusCode,404);
     });   
     it('url inválida', async function() {
       const response = await supertest(app)
                               .patch(`/api/v1/banco/x`)
-                              .send({
-                                    "codigo":"999",
-                                    "nome":"Sou um banco de teste atualizado"    
-                                    });
+                              .send({});
       assert.equal(response.statusCode,400);
     });  
   });

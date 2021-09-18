@@ -48,7 +48,7 @@ const getAll =  async function(req, res) {
         
         //Response
         res.statusCode = 200;
-        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: retorno , mensagem: !favorecidosBancos ? "Registro não encontrado!!!" : null });
+        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: retorno , mensagem: favorecidosBancos.rows.length == 0 ? "Registro não encontrado!!!" : null });
     }
     catch (error)
     {
@@ -79,6 +79,7 @@ const getById = async function(req, res) {
 const create = async function(req, res) {
     try
     {      
+        let result = 0;
         // Se o favorecido já existe , através da chamada ao seu cpj/cnpj ou email , retorna seu id.
         if (req.body.favorecido.id)
         {
@@ -87,7 +88,7 @@ const create = async function(req, res) {
             newFavorecidoBanco.idBanco = req.body.banco.id;            
 
             // Cria o Favorecido
-            await FavorecidoBanco.create(newFavorecidoBanco);              
+            result = await FavorecidoBanco.create(newFavorecidoBanco);              
         }
         else {
             const t = await db.con.transaction();
@@ -101,7 +102,7 @@ const create = async function(req, res) {
                 newFavorecidoBanco.idBanco = req.body.banco.id;                
 
                 // Cria o Favorecido Banco
-                await FavorecidoBanco.create(newFavorecidoBanco,{ transaction: t });  
+                result = await FavorecidoBanco.create(newFavorecidoBanco,{ transaction: t });  
 
                 //Comita
                 await t.commit();
@@ -113,7 +114,7 @@ const create = async function(req, res) {
         }       
         // Response
         res.statusCode = 200;
-        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: req.body , mensagem: "Registro criado com sucesso!!!"});
+        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: result.id , mensagem: "Registro criado com sucesso!!!"});
     }
     catch (error)
     {
@@ -225,7 +226,7 @@ const remove = async function(req, res) {
         });        
 
         // Response
-        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: null , mensagem: `${qtde} registro removido !!!`});
+        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: null , mensagem: `${qtde} registro removido!!!`});
         
     }
     catch (error)
@@ -248,7 +249,7 @@ const removeMany =  async function(req, res) {
         });
 
          // Response
-         res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: null , mensagem: `${qtde} registro(s) removido(s) !!!`});
+         res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: null , mensagem: `${qtde} registro(s) removido(s)!!!`});
        
     }
     catch (error)
