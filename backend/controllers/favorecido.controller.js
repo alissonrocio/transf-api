@@ -41,7 +41,7 @@ const getAll =  async function(req, res) {
         
         //Response
         res.statusCode = 200;
-        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: retorno , mensagem: !favorecidos ? "Registro não encontrado!!!" : null });
+        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: retorno , mensagem: favorecidos.rows.length == 0 ? "Registro não encontrado!!!" : null });
     }
     catch (error)
     {
@@ -72,11 +72,11 @@ const getById = async function(req, res) {
 const create = async function(req, res) {
     try
     {      
-        await Favorecido.create(req.body);  
+        const result = await Favorecido.create(req.body);  
 
         // Response
         res.statusCode = 200;
-        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: req.body , mensagem: "Registro criado com sucesso!!!"});
+        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: result.id  , mensagem: "Registro criado com sucesso!!!"});
     }
     catch (error)
     {
@@ -96,7 +96,7 @@ const edit = async function(req, res) {
           );
 
          // Response
-         res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: req.body , mensagem: `${qtde} atualizado!!!`});
+         res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: req.body , mensagem: `${qtde} registro atualizado!!!`});
 
     }
     catch (error)

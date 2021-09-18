@@ -21,7 +21,7 @@ describe('build-teste', function() {
                 where : {codigo: {[Constantes.Sequelize.OperadoresSequelize.iLike] : `999`}}               
             });
             await Favorecido.destroy({
-                where : {nome: {[Constantes.Sequelize.OperadoresSequelize.iLike] : `%[TESTE]%`}}               
+                where : {cpfcnpj: {[Constantes.Sequelize.OperadoresSequelize.iLike] : `00000000000`}}               
             });
 
             assert.equal(1,1);
