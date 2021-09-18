@@ -1,5 +1,4 @@
 import express from 'express'
-
 import bancoRouter from './routes/banco.routes.js'
 import favorecidoRouter from './routes/favorecido.routes.js'
 import favorecidoBancoRouter from './routes/favorecido-banco.routes.js'
@@ -7,9 +6,8 @@ import Enumerados from './utils/enums.js'
 import { ValidationError } from 'express-validation'
 
 import db from './db/db.js'
-
 const app = express()
-const port = process.env.PORT || 8087
+let port = process.env.NODEPORT || 8087
 
 app.get('/', async (req, res) => {
   res.send('Olá :)')
@@ -33,8 +31,8 @@ app.use(function(err, req, res, next) {
   return res.status(500).json(err)
 })
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+app.listen(port, () => {  
+  console.log(`app listening at http://localhost:${port}`)
 
 })
 
@@ -44,3 +42,5 @@ initDb();
 async function initDb() {
  //await db.iniciaDb();
 }
+
+export default app;

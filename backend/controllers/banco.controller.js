@@ -38,7 +38,7 @@ const getAll =  async function(req, res) {
         
         //Response
         res.statusCode = 200;
-        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: retorno , mensagem: !bancos ? "Registro não encontrado!!!" : null });
+        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: retorno , mensagem: bancos.rows.length == 0 ? "Registro não encontrado!!!" : null });
     }
     catch (error)
     {
@@ -70,11 +70,11 @@ const create = async function(req, res) {
     try
     {      
         // Inserindo o registro no banco
-        await Banco.create(req.body);  
+        const result = await Banco.create(req.body);  
 
         // Response
         res.statusCode = 200;
-        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: req.body , mensagem: "Registro criado com sucesso!!!"});
+        res.send({tipo: Enumerados.TipoMsgEnum.Sucesso , data: result.id , mensagem: "Registro criado com sucesso!!!"});
     }
     catch (error)
     {
