@@ -1,9 +1,17 @@
 # 1. Objetivo
 
+Criar uma api rodando em nodejs através do express conectando no banco de dados postgres ,
+utilizando o sequelize como ORM para manipulação do banco e testes com o mocha.
+
+node + express + sequelize + postgres + mocha
+
+## 1.1 TODO
+
 * Criar um crud de cadastro de bancos.
 * Criar um crud de cadastro de favorecidos.
-* Criar um crud de cadastro de favorecido banco
+* Criar um crud de cadastro de favorecido banco.
 * Criar as rotinas de validação.
+* Criar as rotinas de teste.
 
 # 2. Rotas
 
@@ -136,3 +144,77 @@
     "ids": []
 }
 ```
+
+# 3. Instruções
+
+Para testar a aplicação inicie clonando o repositório
+
+```
+git clone 
+```
+
+Tem duas opções para executar a aplicação. 
+
+Rodando direto a aplicação do docker hub ou executando localmente.
+
+## 3.1. Executando do docker hub.
+
+Na pasta da aplicação execute o docker-compose que ele vai subir os dois
+container.
+
+Cria os containers
+```
+docker-compose up
+```
+
+Remove os containers
+```
+docker-compose down
+```
+
+A aplicação vai subir na 8087 e o banco na 8086. Caso essas portas estejam usadas
+mudar no compose.yml.
+
+## 3.2. Executando localmente.
+
+A aplicação e o banco de dados foram disponibilizados no docker hub.
+
+Mas para executar localmente você vai precisar apenas do banco de dados.
+
+Baixa a imagem do banco de dados com algumas informações preenchidas.
+
+```
+docker pull alissonrocio/transfeera-db:latest
+```
+
+Cria o container na sua máquina
+
+```
+docker run --name algum_nome -p 8084:5432 -d alissonrocio/transfeera-db:latest
+```
+
+No reposítorio clonado na pasta backend.
+
+Executar a aplicação.
+
+Obs: No arquivo .env alterar a porta em DBPORT , caso tenha subido o container do banco em outra porta.
+
+```
+node index.js
+```
+
+Executar os testes
+
+Obs: Se a aplicação estiver rodando pare e rode o comando abaixo.
+
+```
+npm test
+```
+
+# Referências
+
+* [Node](https://nodejs.org/en/)    - Core
+* [Express](https://expressjs.com/) - Servidor web
+* [Sequelize](https://sequelize.org/) - ORM
+* [Express Validator](https://express-validator.github.io/docs/) - Validações
+* [Mocha](https://mochajs.org/) - Teste
