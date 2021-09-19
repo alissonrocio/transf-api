@@ -150,7 +150,7 @@ node + express + sequelize + postgres + mocha
 Para testar a aplicação inicie clonando o repositório
 
 ```
-git clone 
+git clone https://github.com/alissonrocio/transf-api.git
 ```
 
 Tem duas opções para executar a aplicação. 
